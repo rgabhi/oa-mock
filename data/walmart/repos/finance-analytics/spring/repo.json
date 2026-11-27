@@ -1,0 +1,122 @@
+{
+ "stack": "spring",
+ "name": "Finance Transaction Analytics API (Spring Boot)",
+ "readonly": [
+  "README.md",
+  "pom.xml",
+  "src/test/*",
+  "src/main/java/com/finance/data/*"
+ ],
+ "open": [
+  "src/main/java/com/finance/controller/TransactionController.java"
+ ],
+ "tests": [
+  {
+   "id": "com.finance.TransactionTests.returnsTheDebitAndCreditTotalsOfACity",
+   "title": "API 1: a city's debit and credit totals",
+   "hidden": false
+  },
+  {
+   "id": "com.finance.TransactionTests.returnsTheTotalsOfOneUserInACity",
+   "title": "API 2: one user's totals in a city",
+   "hidden": false
+  },
+  {
+   "id": "com.finance.TransactionTests.summarisesEveryUserInACity",
+   "title": "API 3: a summary of every user in a city",
+   "hidden": false
+  },
+  {
+   "id": "com.finance.TransactionTests.savesTheSummaryToAJSONFile",
+   "title": "API 3 saves its response to a JSON file",
+   "hidden": false
+  },
+  {
+   "id": "com.finance.TransactionTests.unknownCitiesAndUsersGetA404",
+   "title": "Unknown cities and users get a 404",
+   "hidden": false
+  },
+  {
+   "id": "com.finance.MoreTransactionTests.cityNamesMatchExactly",
+   "title": "City names match exactly",
+   "hidden": true
+  },
+  {
+   "id": "com.finance.MoreTransactionTests.theUserIdInThePathIsANumber",
+   "title": "The user id in the path is a number",
+   "hidden": true
+  },
+  {
+   "id": "com.finance.MoreTransactionTests.theExampleFromTheTaskAhmedabad",
+   "title": "The task's example: Ahmedabad",
+   "hidden": true
+  },
+  {
+   "id": "com.finance.MoreTransactionTests.a404SavesNoFileAndACityGetsItsOwnFile",
+   "title": "A 404 saves no file; each city gets its own file",
+   "hidden": true
+  }
+ ],
+ "bugs": [
+  {
+   "file": "src/main/java/com/finance/controller/TransactionController.java",
+   "test": "returnsTheDebitAndCreditTotalsOfACity",
+   "why": "the totals helper isn't written yet: it returns 0 for both totals",
+   "fix": "Add up the amounts of the DEBIT transactions and of the CREDIT transactions separately.",
+   "edits": [
+    {
+     "fixed": "    static Map<String, Long> totals(List<Transaction> list) {\n        Map<String, Long> out = new LinkedHashMap<>();\n        out.put(\"totalDebit\", list.stream().filter(t -> \"DEBIT\".equals(t.type())).mapToLong(Transaction::amount).sum());\n        out.put(\"totalCredit\", list.stream().filter(t -> \"CREDIT\".equals(t.type())).mapToLong(Transaction::amount).sum());\n        return out;\n    }\n",
+     "buggy": "    static Map<String, Long> totals(List<Transaction> list) {\n        // TODO: add up the DEBIT amounts and the CREDIT amounts of `list`\n        Map<String, Long> out = new LinkedHashMap<>();\n        out.put(\"totalDebit\", 0L);\n        out.put(\"totalCredit\", 0L);\n        return out;\n    }\n"
+    }
+   ]
+  },
+  {
+   "file": "src/main/java/com/finance/controller/TransactionController.java",
+   "test": "returnsTheDebitAndCreditTotalsOfACity",
+   "why": "API 1 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions of the city; 404 with {\"message\": \"No transactions found\"} when there are none, else 200 with their totals.",
+   "edits": [
+    {
+     "fixed": "    public ResponseEntity<?> getCityTotals(@PathVariable String city) {\n        List<Transaction> matching = inCity(city);\n        if (matching.isEmpty()) {\n            return ResponseEntity.status(404).body(NOT_FOUND);\n        }\n        return ResponseEntity.ok(totals(matching));\n    }\n",
+     "buggy": "    public ResponseEntity<?> getCityTotals(@PathVariable String city) {\n        // TODO: 200 with the city's totals, or 404 with NOT_FOUND\n        return ResponseEntity.status(501).body(Map.of(\"message\", \"Not implemented\"));\n    }\n"
+    }
+   ]
+  },
+  {
+   "file": "src/main/java/com/finance/controller/TransactionController.java",
+   "test": "returnsTheTotalsOfOneUserInACity",
+   "why": "API 2 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions whose userId equals the id in the path (as a number) and whose city matches; 404 when none, else their totals.",
+   "edits": [
+    {
+     "fixed": "    public ResponseEntity<?> getUserCityTotals(@PathVariable String id, @PathVariable String city) {\n        List<Transaction> matching = id.matches(\"\\\\d{1,18}\")\n                ? inCity(city).stream().filter(t -> t.userId() == Long.parseLong(id)).toList()\n                : List.of();\n        if (matching.isEmpty()) {\n            return ResponseEntity.status(404).body(NOT_FOUND);\n        }\n        return ResponseEntity.ok(totals(matching));\n    }\n",
+     "buggy": "    public ResponseEntity<?> getUserCityTotals(@PathVariable String id, @PathVariable String city) {\n        // TODO: 200 with the totals of user {id} in {city}, or 404 with NOT_FOUND\n        return ResponseEntity.status(501).body(Map.of(\"message\", \"Not implemented\"));\n    }\n"
+    }
+   ]
+  },
+  {
+   "file": "src/main/java/com/finance/controller/TransactionController.java",
+   "test": "summarisesEveryUserInACity",
+   "why": "API 3 isn't written yet: the handler answers 501",
+   "fix": "Group the city's transactions by userId (sorted), build {userId, totalDebit, totalCredit} for each, save the array, return it; 404 when the city has none.",
+   "edits": [
+    {
+     "fixed": "    public ResponseEntity<?> postCityUserSummary(@PathVariable String city) {\n        List<Transaction> matching = inCity(city);\n        if (matching.isEmpty()) {\n            return ResponseEntity.status(404).body(NOT_FOUND);\n        }\n        List<Map<String, Object>> summary = new TreeSet<>(matching.stream().map(Transaction::userId).toList()).stream()\n                .map(userId -> {\n                    Map<String, Object> row = new LinkedHashMap<>();\n                    row.put(\"userId\", userId);\n                    row.putAll(totals(matching.stream().filter(t -> t.userId() == userId).toList()));\n                    return row;\n                })\n                .toList();\n        reports.saveReport(city, summary);\n        return ResponseEntity.ok(summary);\n    }\n",
+     "buggy": "    public ResponseEntity<?> postCityUserSummary(@PathVariable String city) {\n        // TODO: one {userId, totalDebit, totalCredit} per user in {city}, sorted by userId;\n        //       save it with reports.saveReport and return it, or 404 with NOT_FOUND\n        return ResponseEntity.status(501).body(Map.of(\"message\", \"Not implemented\"));\n    }\n"
+    }
+   ]
+  },
+  {
+   "file": "src/main/java/com/finance/report/ReportWriter.java",
+   "test": "savesTheSummaryToAJSONFile",
+   "why": "saving the report isn't written yet: nothing is written to output/{city}.json",
+   "fix": "Create the output folder if needed and write the data as JSON to output/{city}.json.",
+   "edits": [
+    {
+     "fixed": "    public void saveReport(String city, Object data) {\n        try {\n            Files.createDirectories(OUTPUT_DIR);\n            json.writerWithDefaultPrettyPrinter().writeValue(OUTPUT_DIR.resolve(city + \".json\").toFile(), data);\n        } catch (IOException e) {\n            throw new UncheckedIOException(e);\n        }\n    }\n",
+     "buggy": "    public void saveReport(String city, Object data) {\n        // TODO: write `data` as JSON to output/<city>.json (create the folder if it's missing)\n    }\n"
+    }
+   ]
+  }
+ ]
+}
