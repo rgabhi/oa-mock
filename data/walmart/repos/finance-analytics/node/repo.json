@@ -1,0 +1,123 @@
+{
+ "stack": "node",
+ "name": "Finance Transaction Analytics API (Node.js)",
+ "readonly": [
+  "README.md",
+  "package.json",
+  "jest.config.js",
+  "tests/*",
+  "data/transactions.js"
+ ],
+ "open": [
+  "controllers/transactionController.js"
+ ],
+ "tests": [
+  {
+   "id": "TransactionTests.returns the debit and credit totals of a city",
+   "title": "API 1: a city's debit and credit totals",
+   "hidden": false
+  },
+  {
+   "id": "TransactionTests.returns the totals of one user in a city",
+   "title": "API 2: one user's totals in a city",
+   "hidden": false
+  },
+  {
+   "id": "TransactionTests.summarises every user in a city",
+   "title": "API 3: a summary of every user in a city",
+   "hidden": false
+  },
+  {
+   "id": "TransactionTests.saves the summary to a JSON file",
+   "title": "API 3 saves its response to a JSON file",
+   "hidden": false
+  },
+  {
+   "id": "TransactionTests.unknown cities and users get a 404",
+   "title": "Unknown cities and users get a 404",
+   "hidden": false
+  },
+  {
+   "id": "MoreTransactionTests.city names match exactly",
+   "title": "City names match exactly",
+   "hidden": true
+  },
+  {
+   "id": "MoreTransactionTests.the user id in the path is a number",
+   "title": "The user id in the path is a number",
+   "hidden": true
+  },
+  {
+   "id": "MoreTransactionTests.the example from the task: Ahmedabad",
+   "title": "The task's example: Ahmedabad",
+   "hidden": true
+  },
+  {
+   "id": "MoreTransactionTests.a 404 saves no file, and a city gets its own file",
+   "title": "A 404 saves no file; each city gets its own file",
+   "hidden": true
+  }
+ ],
+ "bugs": [
+  {
+   "file": "controllers/transactionController.js",
+   "test": "returns the debit and credit totals of a city",
+   "why": "the totals helper isn't written yet: it returns 0 for both totals",
+   "fix": "Add up the amounts of the DEBIT transactions and of the CREDIT transactions separately.",
+   "edits": [
+    {
+     "fixed": "const totals = (list) => ({\n  totalDebit: list.filter((t) => t.type === 'DEBIT').reduce((sum, t) => sum + t.amount, 0),\n  totalCredit: list.filter((t) => t.type === 'CREDIT').reduce((sum, t) => sum + t.amount, 0),\n});\n",
+     "buggy": "const totals = (list) => ({\n  // TODO: add up the DEBIT amounts and the CREDIT amounts of `list`\n  totalDebit: 0,\n  totalCredit: 0,\n});\n"
+    }
+   ]
+  },
+  {
+   "file": "controllers/transactionController.js",
+   "test": "returns the debit and credit totals of a city",
+   "why": "API 1 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions of the city; 404 with {\"message\": \"No transactions found\"} when there are none, else 200 with their totals.",
+   "edits": [
+    {
+     "fixed": "const getCityTotals = (req, res) => {\n  const inCity = transactions.filter((t) => t.city === req.params.city);\n  if (inCity.length === 0) {\n    return res.status(404).json(NOT_FOUND);\n  }\n  res.status(200).json(totals(inCity));\n};\n",
+     "buggy": "const getCityTotals = (req, res) => {\n  // TODO: 200 with the city's totals, or 404 with NOT_FOUND\n  res.status(501).json({ message: 'Not implemented' });\n};\n"
+    }
+   ]
+  },
+  {
+   "file": "controllers/transactionController.js",
+   "test": "returns the totals of one user in a city",
+   "why": "API 2 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions whose userId equals the id in the path (as a number) and whose city matches; 404 when none, else their totals.",
+   "edits": [
+    {
+     "fixed": "const getUserCityTotals = (req, res) => {\n  const userId = Number(req.params.id);\n  const matching = transactions.filter((t) => t.userId === userId && t.city === req.params.city);\n  if (matching.length === 0) {\n    return res.status(404).json(NOT_FOUND);\n  }\n  res.status(200).json(totals(matching));\n};\n",
+     "buggy": "const getUserCityTotals = (req, res) => {\n  // TODO: 200 with the totals of user :id in :city, or 404 with NOT_FOUND\n  res.status(501).json({ message: 'Not implemented' });\n};\n"
+    }
+   ]
+  },
+  {
+   "file": "controllers/transactionController.js",
+   "test": "summarises every user in a city",
+   "why": "API 3 isn't written yet: the handler answers 501",
+   "fix": "Group the city's transactions by userId (sorted), build {userId, totalDebit, totalCredit} for each, save the array, return it; 404 when the city has none.",
+   "edits": [
+    {
+     "fixed": "const postCityUserSummary = (req, res) => {\n  const { city } = req.params;\n  const inCity = transactions.filter((t) => t.city === city);\n  if (inCity.length === 0) {\n    return res.status(404).json(NOT_FOUND);\n  }\n  const userIds = [...new Set(inCity.map((t) => t.userId))].sort((a, b) => a - b);\n  const summary = userIds.map((userId) => ({ userId, ...totals(inCity.filter((t) => t.userId === userId)) }));\n  saveReport(city, summary);\n  res.status(200).json(summary);\n};\n",
+     "buggy": "const postCityUserSummary = (req, res) => {\n  // TODO: one { userId, totalDebit, totalCredit } per user in :city, sorted by userId; save it with saveReport\n  //       and return it, or 404 with NOT_FOUND\n  res.status(501).json({ message: 'Not implemented' });\n};\n"
+    }
+   ]
+  },
+  {
+   "file": "utils/report.js",
+   "test": "saves the summary to a JSON file",
+   "why": "saving the report isn't written yet: nothing is written to output/{city}.json",
+   "fix": "Create the output folder if needed and write the data as JSON to output/{city}.json.",
+   "edits": [
+    {
+     "fixed": "const saveReport = (city, data) => {\n  fs.mkdirSync(OUTPUT_DIR, { recursive: true });\n  fs.writeFileSync(path.join(OUTPUT_DIR, `${city}.json`), JSON.stringify(data, null, 2));\n};\n",
+     "buggy": "const saveReport = (city, data) => {\n  // TODO: write `data` as JSON to output/<city>.json (create the folder if it's missing)\n};\n"
+    }
+   ]
+  }
+ ]
+}

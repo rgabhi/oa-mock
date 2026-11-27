@@ -1,0 +1,123 @@
+{
+ "stack": "django",
+ "name": "Finance Transaction Analytics API (Django)",
+ "readonly": [
+  "README.md",
+  "requirements.txt",
+  "manage.py",
+  "transactions/tests/*",
+  "transactions/data.py"
+ ],
+ "open": [
+  "transactions/views.py"
+ ],
+ "tests": [
+  {
+   "id": "transactions.tests.test_transactions.TransactionTests.test_returns_the_debit_and_credit_totals_of_a_city",
+   "title": "API 1: a city's debit and credit totals",
+   "hidden": false
+  },
+  {
+   "id": "transactions.tests.test_transactions.TransactionTests.test_returns_the_totals_of_one_user_in_a_city",
+   "title": "API 2: one user's totals in a city",
+   "hidden": false
+  },
+  {
+   "id": "transactions.tests.test_transactions.TransactionTests.test_summarises_every_user_in_a_city",
+   "title": "API 3: a summary of every user in a city",
+   "hidden": false
+  },
+  {
+   "id": "transactions.tests.test_transactions.TransactionTests.test_saves_the_summary_to_a_JSON_file",
+   "title": "API 3 saves its response to a JSON file",
+   "hidden": false
+  },
+  {
+   "id": "transactions.tests.test_transactions.TransactionTests.test_unknown_cities_and_users_get_a_404",
+   "title": "Unknown cities and users get a 404",
+   "hidden": false
+  },
+  {
+   "id": "transactions.tests.test_more.MoreTransactionTests.test_city_names_match_exactly",
+   "title": "City names match exactly",
+   "hidden": true
+  },
+  {
+   "id": "transactions.tests.test_more.MoreTransactionTests.test_the_user_id_in_the_path_is_a_number",
+   "title": "The user id in the path is a number",
+   "hidden": true
+  },
+  {
+   "id": "transactions.tests.test_more.MoreTransactionTests.test_the_example_from_the_task_Ahmedabad",
+   "title": "The task's example: Ahmedabad",
+   "hidden": true
+  },
+  {
+   "id": "transactions.tests.test_more.MoreTransactionTests.test_a_404_saves_no_file_and_a_city_gets_its_own_file",
+   "title": "A 404 saves no file; each city gets its own file",
+   "hidden": true
+  }
+ ],
+ "bugs": [
+  {
+   "file": "transactions/report.py",
+   "test": "test_saves_the_summary_to_a_JSON_file",
+   "why": "saving the report isn't written yet: nothing is written to output/{city}.json",
+   "fix": "Create the output folder if needed and write the data as JSON to output/{city}.json.",
+   "edits": [
+    {
+     "fixed": "def save_report(city, data):\n    \"\"\"Saves an API response as output/<city>.json (pretty-printed), replacing any earlier file for that city.\"\"\"\n    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)\n    (OUTPUT_DIR / (\"%s.json\" % city)).write_text(json.dumps(data, indent=2), encoding=\"utf-8\")\n",
+     "buggy": "def save_report(city, data):\n    \"\"\"Saves an API response as output/<city>.json (pretty-printed), replacing any earlier file for that city.\"\"\"\n    # TODO: write `data` as JSON to output/<city>.json (create the folder if it's missing)\n"
+    }
+   ]
+  },
+  {
+   "file": "transactions/views.py",
+   "test": "test_returns_the_debit_and_credit_totals_of_a_city",
+   "why": "the totals helper isn't written yet: it returns 0 for both totals",
+   "fix": "Add up the amounts of the DEBIT transactions and of the CREDIT transactions separately.",
+   "edits": [
+    {
+     "fixed": "def totals(items):\n    \"\"\"Total DEBIT and total CREDIT amounts of a list of transactions.\"\"\"\n    return {\n        \"totalDebit\": sum(t[\"amount\"] for t in items if t[\"type\"] == \"DEBIT\"),\n        \"totalCredit\": sum(t[\"amount\"] for t in items if t[\"type\"] == \"CREDIT\"),\n    }\n",
+     "buggy": "def totals(items):\n    \"\"\"Total DEBIT and total CREDIT amounts of a list of transactions.\"\"\"\n    # TODO: add up the DEBIT amounts and the CREDIT amounts of `items`\n    return {\"totalDebit\": 0, \"totalCredit\": 0}\n"
+    }
+   ]
+  },
+  {
+   "file": "transactions/views.py",
+   "test": "test_returns_the_debit_and_credit_totals_of_a_city",
+   "why": "API 1 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions of the city; 404 with {\"message\": \"No transactions found\"} when there are none, else 200 with their totals.",
+   "edits": [
+    {
+     "fixed": "def city_totals(city):\n    \"\"\"API 1. GET /transactions/location/<city>\"\"\"\n    in_city = [t for t in TRANSACTIONS if t[\"city\"] == city]\n    if not in_city:\n        return Response(NOT_FOUND, status=404)\n    return Response(totals(in_city), status=200)\n",
+     "buggy": "def city_totals(city):\n    \"\"\"API 1. GET /transactions/location/<city>\"\"\"\n    # TODO: 200 with the city's totals, or 404 with NOT_FOUND\n    return Response({\"message\": \"Not implemented\"}, status=501)\n"
+    }
+   ]
+  },
+  {
+   "file": "transactions/views.py",
+   "test": "test_returns_the_totals_of_one_user_in_a_city",
+   "why": "API 2 isn't written yet: the handler answers 501",
+   "fix": "Keep the transactions whose userId equals the id in the path (as a number) and whose city matches; 404 when none, else their totals.",
+   "edits": [
+    {
+     "fixed": "def user_city_totals(request, user_id, city):\n    \"\"\"API 2. GET /transaction/<id>/location/<city>\"\"\"\n    matching = [t for t in TRANSACTIONS if user_id.isdigit() and t[\"userId\"] == int(user_id) and t[\"city\"] == city]\n    if not matching:\n        return Response(NOT_FOUND, status=404)\n    return Response(totals(matching), status=200)\n",
+     "buggy": "def user_city_totals(request, user_id, city):\n    \"\"\"API 2. GET /transaction/<id>/location/<city>\"\"\"\n    # TODO: 200 with the totals of user <user_id> in <city>, or 404 with NOT_FOUND\n    return Response({\"message\": \"Not implemented\"}, status=501)\n"
+    }
+   ]
+  },
+  {
+   "file": "transactions/views.py",
+   "test": "test_summarises_every_user_in_a_city",
+   "why": "API 3 isn't written yet: the handler answers 501",
+   "fix": "Group the city's transactions by userId (sorted), build {userId, totalDebit, totalCredit} for each, save the array, return it; 404 when the city has none.",
+   "edits": [
+    {
+     "fixed": "def city_user_summary(city):\n    \"\"\"API 3. POST /transactions/location/<city>\"\"\"\n    in_city = [t for t in TRANSACTIONS if t[\"city\"] == city]\n    if not in_city:\n        return Response(NOT_FOUND, status=404)\n    summary = [dict({\"userId\": user_id}, **totals([t for t in in_city if t[\"userId\"] == user_id]))\n               for user_id in sorted({t[\"userId\"] for t in in_city})]\n    save_report(city, summary)\n    return Response(summary, status=200)\n",
+     "buggy": "def city_user_summary(city):\n    \"\"\"API 3. POST /transactions/location/<city>\"\"\"\n    # TODO: one {userId, totalDebit, totalCredit} per user in <city>, sorted by userId;\n    #       save it with save_report and return it, or 404 with NOT_FOUND\n    return Response({\"message\": \"Not implemented\"}, status=501)\n"
+    }
+   ]
+  }
+ ]
+}

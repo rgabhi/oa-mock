@@ -223,6 +223,20 @@ Each one comes in Node.js, Django and Spring Boot. Formats: **Repository warm-up
 
 Formats: **Software Engineer** (3 questions, 90 min; the real test required at least two languages), **Embedded Systems** (the 2 coding questions, 40 min), Custom. Notes: `sources/mathworks/`.
 
+### Walmart
+
+6 coding questions and 1 backend repository task, from OAs at IIT BHU, IIT Guwahati, IIT Madras, IIT Kharagpur and one set whose college wasn't given.
+
+| OA | Question | |
+|---|---|---|
+| IIT BHU | Minimum Relay Packs (Medium), Count Valid Advertisement Schedules (Hard), Split Tasks Between Two Assistants (Easy) | |
+| IIT Guwahati | Maximum Peaks at Minimum Cost (Medium) | the real test also had 10 MCQs and a small project |
+| IIT Madras | Assign Modules to Three Servers (Medium) | also asked at IIT Kharagpur |
+| IIT Madras | **Finance Transaction Analytics API** (repository) | write 3 REST APIs in Node.js, Django or Spring Boot; the 404 message and file name are the mock's own |
+| College not given | Circular Queue of Primes (Easy) | |
+
+Formats: **IIT BHU** (90 min), **IIT Guwahati** (40 min), **IIT Madras** (coding + the API task, 90 min), **IIT Kharagpur** (45 min), **Set 3** (40 min), Custom; the times not reported are assumed. Reported but not runnable: a bishop question, a Django models task (IIT Kharagpur) and the MCQs, listed in the app with the reason. Notes: `sources/walmart/`.
+
 ---
 
 ## Troubleshooting

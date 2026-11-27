@@ -1,0 +1,22 @@
+{
+ "id": "finance-analytics",
+ "type": "repo",
+ "title": "Finance Transaction Analytics API (repository)",
+ "diff": "Repo",
+ "src": "Walmart OA, IIT Madras (coding question 2); also reported as a backend question from another Walmart set",
+ "college": "IIT Madras",
+ "body": "<p>A dataset of financial transactions recorded across several cities is already loaded into the application. Each transaction has a <code>transactionId</code>, a <code>userId</code>, a <code>city</code>, a <code>type</code> (<code>DEBIT</code> or <code>CREDIT</code>) and an <code>amount</code>.</p>\n<p>Write <b>three REST APIs</b> for transaction analytics:</p>\n<ol>\n<li><code>GET /transactions/location/{city}</code>: the total debit and total credit amounts in that city, as <code>{\"totalDebit\": ..., \"totalCredit\": ...}</code>.</li>\n<li><code>GET /transaction/{id}/location/{city}</code>: the same totals for one user in that city.</li>\n<li><code>POST /transactions/location/{city}</code>: one <code>{\"userId\", \"totalDebit\", \"totalCredit\"}</code> object per user in that city, and the response is also <b>saved to a JSON file</b> on the server.</li>\n</ol>\n<p>Each returns <b>404</b> when no transaction matches. The routes are wired up but the code behind them isn't written: implement it until every test passes. The exact rules, the 404 message and the file to write are in <code>README.md</code>.</p>\n<p><b>Note:</b> the acceptance criteria are the predefined tests; more tests run when you submit.</p>\n<p class=\"muted\">From a Walmart OA (IIT Madras, coding question 2: \"choose Node.js, Python or Spring Boot and write 3 APIs\"), with the details from a write-up of the same task. The original 404 message and file name weren't reported, so this mock uses its own (in the README). The dataset is the reported example plus more transactions.</p>",
+ "stacks": [
+  "node",
+  "django",
+  "spring"
+ ],
+ "inp": "",
+ "out": "",
+ "cons": [],
+ "samples": [],
+ "hidden": [],
+ "ref": "",
+ "lc": null,
+ "lcurl": null
+}

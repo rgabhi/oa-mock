@@ -154,23 +154,26 @@
   {
    "key": "walmart",
    "name": "Walmart OA Mock",
-   "tagline": "Coding · IIT BHU · IIT Guwahati · more",
-   "questions": 5,
+   "tagline": "Coding · backend APIs · IIT BHU · IIT Guwahati · IIT Madras · more",
+   "questions": 7,
    "years": [
     2026
    ],
    "roles": [],
    "colleges": [
     "IIT BHU",
-    "IIT Guwahati"
+    "IIT Guwahati",
+    "IIT Madras"
    ],
    "formats": [
     "IIT BHU OA",
     "IIT Guwahati OA",
-    "Set 3 (college not given)"
+    "Set 3 (college not given)",
+    "IIT Madras OA",
+    "IIT Kharagpur OA"
    ],
-   "bytes": 7738017,
-   "download": 2801000
+   "bytes": 10287702,
+   "download": 3915000
   }
  ]
 }
